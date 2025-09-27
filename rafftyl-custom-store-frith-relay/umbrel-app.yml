@@ -1,0 +1,20 @@
+manifestVersion: 1
+id: rafftyl-custom-store-frith-relay
+category: social
+name: Frith Nostr Relay
+version: "0.1.0"  # Start with this; update when you make changes. Use Frith's latest tag if available (check the repo for releases).
+tagline: A secure Nostr relay with authentication and group support
+description: >-
+  Frith is a Nostr relay based on Khatru that enforces custom access policies, including NIP-29 groups, whitelists, and invite codes.
+  It's ideal for community relays (e.g., with Flotilla.social) but works standalone. Run your own authenticated Nostr server on Umbrel.
+  Configure via environment variables for relay name, pubkey, whitelists, and more.
+developer: coracle-social
+website: https://github.com/coracle-social/frith
+dependencies: [] 
+repo: https://github.com/coracle-social/frith
+support: https://github.com/coracle-social/frith/issues
+port: 3334
+gallery: []
+path: /
+defaultUsername: ""
+defaultPassword: ""
