@@ -1,5 +1,5 @@
 services:
-  app:
+  frith-relay:
     image: ghcr.io/coracle-social/frith:latest
     restart: on-failure
     stop_grace_period: 1m0s
@@ -9,21 +9,16 @@ services:
       - RELAY_URL=wss://${APP_IP}:3334
       - RELAY_NAME=My Frith Relay
       - RELAY_DESCRIPTION=A custom Nostr relay on Umbrel.
-      # Add more env vars as needed, e.g.:
-      # - RELAY_WHITELIST=pubkey1,pubkey2
-      # - RELAY_ENABLE_GROUPS=true
-      # - RELAY_GENERATE_CLAIMS=true
     volumes:
       - ${APP_DATA_DIR}/data:/data
     ports:
       - 3334:3334
 
   app_proxy:
-    container_name: ${APP_ID}_app_proxy
     environment:
-      APP_HOST: frith-relay_1
+      APP_HOST: frith-relay
       APP_PORT: 3334
-      PROXY_AUTH_ADD: false
+      PROXY_AUTH_ADD: "false"
     depends_on:
-      - app
+      - frith-relay 
     restart: on-failure
