@@ -12,8 +12,6 @@ services:
       - RELAY_DESCRIPTION=A custom Nostr relay on Umbrel.
     volumes:
       - ${APP_DATA_DIR}:/data
-    ports:
-      - 3334:3334
 
   app_proxy:
     environment:
