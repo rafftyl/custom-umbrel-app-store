@@ -2,7 +2,7 @@ manifestVersion: 1
 id: rafftyl-custom-store-frith-relay
 category: social
 name: Frith Nostr Relay
-version: "0.1.0"  # Start with this; update when you make changes. Use Frith's latest tag if available (check the repo for releases).
+version: "0.1.1"
 tagline: A secure Nostr relay with authentication and group support
 description: >-
   Frith is a Nostr relay based on Khatru that enforces custom access policies, including NIP-29 groups, whitelists, and invite codes.
@@ -18,3 +18,10 @@ gallery: []
 path: /
 defaultUsername: ""
 defaultPassword: ""
+
+settings:
+  - id: "owner-pubkey"
+    label: "Owner Public Key"
+    type: "text"
+    help: "Enter the hex public key of the relay owner/administrator."
+    placeholder: "e.g., 001122aabbcc..."
