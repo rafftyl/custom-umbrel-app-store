@@ -12,6 +12,7 @@ services:
       - RELAY_DESCRIPTION=A custom Nostr relay on Umbrel, with NIP 29 support (communities).
       - CORS_HEADER="*"
       - RELAY_RESTRICT_USER=false
+      - RELAY_ENABLE_GROUPS=true
     volumes:
       - ${APP_DATA_DIR}:/data
 
