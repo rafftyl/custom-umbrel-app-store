@@ -13,7 +13,7 @@ services:
       - CORS_HEADER="*"
       - RELAY_RESTRICT_USER=false
       - RELAY_ENABLE_GROUPS=true
-      - RELAY_CLAIMS=""
+      - RELAY_CLAIMS=claim
     volumes:
       - ${APP_DATA_DIR}:/data
 
