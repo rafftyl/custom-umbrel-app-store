@@ -2,7 +2,7 @@ manifestVersion: 1
 id: rafftyl-custom-store-frith-relay
 category: social
 name: Frith Nostr Relay
-version: "0.1.5"
+version: "0.1.6"
 tagline: A secure Nostr relay with authentication and group support
 description: >-
   Frith is a Nostr relay based on Khatru that enforces custom access policies, including NIP-29 groups, whitelists, and invite codes.
