@@ -11,9 +11,7 @@ services:
       - RELAY_NAME=My Frith Relay
       - RELAY_DESCRIPTION=A custom Nostr relay on Umbrel, with NIP 29 support (communities).
       - CORS_HEADER="*"
-      - RELAY_ADMINS=7324e05a946c66a7818fd0c0aca80b60fb1e95fde32357ef1a2087303dd0185e
       - RELAY_ENABLE_GROUPS=true
-      - RELAY_RESTRICT_USER=false
     volumes:
       - ${APP_DATA_DIR}:/data
 
