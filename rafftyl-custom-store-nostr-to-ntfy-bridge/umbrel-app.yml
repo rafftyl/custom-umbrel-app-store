@@ -1,0 +1,13 @@
+manifestVersion: 1
+id: nostr-ntfy
+category: social
+name: nostr-to-ntfy
+version: "1.1.0"
+port: 8080
+tagline: Headless, dynamic Nostr notifications.
+description: >-
+  A headless Nostr listener that dynamically routes your mentions and NIP-29 group messages 
+  straight to your local ntfy server. Features a built-in UI for easy configuration.
+developer: rafftyl
+submitter: rafftyl
+repo: https://github.com/rafftyl/nostr-ntfy-app
