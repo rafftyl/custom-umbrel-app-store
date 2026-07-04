@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  bridge_engine:
+  bridge:
     image: rafftyl/nostr-ntfy:1.3.0
     restart: on-failure
     volumes:
@@ -9,9 +9,9 @@ services:
 
   app_proxy:
     environment:
-      APP_HOST: bridge_engine
+      APP_HOST: bridge
       APP_PORT: 8181
       PROXY_AUTH_ADD: "false"
     depends_on:
-      - bridge_engine
+      - bridge
     restart: on-failure
