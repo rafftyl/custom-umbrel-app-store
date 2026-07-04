@@ -19,5 +19,3 @@ defaultUsername: ""
 defaultPassword: ""
 submitter: rafftyl
 submission: https://github.com/rafftyl/custom-umbrel-app-store
-dependencies:
-  - ntfy
