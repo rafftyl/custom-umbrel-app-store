@@ -1,7 +1,7 @@
 manifestVersion: 1
-id: nostr-ntfy
+id: rafftyl-custom-store-nostr-to-ntfy-bridge
 category: social
-name: Nostr-to-ntfy Bridge
+name: nostr-to-ntfy bridge
 version: "1.1.0"
 tagline: Headless, dynamic Nostr notifications.
 description: >-
