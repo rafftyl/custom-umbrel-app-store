@@ -2,9 +2,9 @@ version: "3.7"
 
 services:
   web:
-    image: rafftyl/nostr-ntfy:1.1.0
+    image: rafftyl/nostr-ntfy:1.2.0
     restart: on-failure
     volumes:
       - ${APP_DATA_DIR}/data:/data
     ports:
-      - ${APP_PORT}:8080
+      - ${APP_PORT}:8181
