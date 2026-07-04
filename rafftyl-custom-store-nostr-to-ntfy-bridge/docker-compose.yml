@@ -1,17 +1,17 @@
 version: "3.7"
 
 services:
-  web:
-    image: rafftyl/nostr-ntfy:1.2.0
+  bridge_engine:
+    image: rafftyl/nostr-ntfy:1.3.0
     restart: on-failure
     volumes:
       - ${APP_DATA_DIR}/data:/data
 
   app_proxy:
     environment:
-      APP_HOST: web
+      APP_HOST: bridge_engine
       APP_PORT: 8181
       PROXY_AUTH_ADD: "false"
     depends_on:
-      - web
+      - bridge_engine
     restart: on-failure
