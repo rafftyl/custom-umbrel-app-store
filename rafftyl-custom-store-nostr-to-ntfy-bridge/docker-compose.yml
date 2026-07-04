@@ -1,17 +1,13 @@
-version: "3.7"
-
 services:
   nostr-ntfy-backend:
-    image: rafftyl/nostr-ntfy:1.3.0
-    restart: on-failure
+    image: rafftyl/nostr-ntfy:2.0.0
+    restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data:/data
 
   app_proxy:
     environment:
-      APP_HOST: nostr-ntfy-backend
+      APP_HOST: rafftyl-custom-store-nostr-to-ntfy-bridge_nostr-ntfy-backend_1
       APP_PORT: 8181
       PROXY_AUTH_ADD: "false"
-    depends_on:
-      - nostr-ntfy-backend
-    restart: on-failure
+    restart: unless-stopped
