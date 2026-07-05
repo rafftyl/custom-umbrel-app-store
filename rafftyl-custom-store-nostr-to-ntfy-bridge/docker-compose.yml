@@ -1,6 +1,6 @@
 services:
   nostr-ntfy-backend:
-    image: rafftyl/nostr-ntfy:2.1.0
+    image: rafftyl/nostr-ntfy:2.1.1
     restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data:/data
