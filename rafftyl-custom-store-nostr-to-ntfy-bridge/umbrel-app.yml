@@ -2,7 +2,7 @@ manifestVersion: 1
 id: rafftyl-custom-store-nostr-to-ntfy-bridge
 category: social
 name: nostr-to-ntfy bridge
-version: "2.1.2"
+version: "2.1.3"
 tagline: Headless, dynamic Nostr notifications.
 description: >-
   A headless Nostr listener that dynamically routes your mentions and NIP-29 group messages 
