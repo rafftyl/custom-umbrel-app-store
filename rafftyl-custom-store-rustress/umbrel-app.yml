@@ -1,0 +1,47 @@
+manifestVersion: 1
+id: rafftyl-custom-store-rustress
+storage:
+  dataRoot: data
+category: bitcoin
+name: Rustress
+version: "0.1.0"
+tagline: Lightning addresses with LNURL, NIP-05 & zap receipts over NWC
+description: >-
+  Rustress is a minimal LNURL-pay and Nostr server for Lightning addresses,
+  backed entirely by Nostr Wallet Connect (NWC) — no LND or CLN required.
+  Give people addresses like alice@yourdomain.com, verify NIP-05 identities,
+  publish NIP-57 zap receipts, and split incoming payments with prisms.
+
+
+  Manage users from the built-in admin dashboard: add an NWC connection
+  string for payments and/or a Nostr public key for NIP-05. Prism users
+  automatically forward parts of each payment to other Lightning addresses.
+  Use an NWC connection with make_invoice permission only (pay_invoice for
+  prisms).
+
+
+  Open the app for the admin dashboard and log in with this app's password
+  (shown by Umbrel). For public use, put rustress behind a reverse proxy or
+  tunnel such as Cloudflare Tunnel — Lightning addresses and LNURL callbacks
+  are built from the request Host header, so your public hostname decides
+  the address domain.
+
+
+  Optional: drop a NIP-57 signing key (hex or nsec) into data/nip57-private-key
+  in this app's data folder and restart the app to publish zap receipts.
+
+
+  Note: the upstream Docker image is currently linux/amd64 only.
+developer: frnandu
+website: https://github.com/frnandu/rustress
+dependencies: []
+repo: https://github.com/frnandu/rustress
+support: https://github.com/frnandu/rustress/issues
+port: 3580
+gallery: []
+path: /admin
+defaultUsername: ""
+defaultPassword: ""
+deterministicPassword: true
+submitter: rafftyl
+submission: https://github.com/rafftyl/custom-umbrel-app-store

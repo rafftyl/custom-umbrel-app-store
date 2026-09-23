@@ -1,0 +1,24 @@
+services:
+  web:
+    image: ghcr.io/frnandu/rustress:latest@sha256:dd82bfc0637138a0e3887276ceb2c0c7842d6b94725077685cf8b76d3953ffb6
+    user: "1000:1000"
+    restart: on-failure
+    stop_grace_period: 1m
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+    environment:
+      BIND_ADDRESS: 0.0.0.0
+      PORT: 8080
+      DATABASE_URL: sqlite:/data/rustress.db
+      RUST_LOG: info
+      ADMIN_PASSWORD: "$APP_PASSWORD"
+      NIP57_PRIVATE_KEY: "${NIP57_PRIVATE_KEY:-}"
+
+  app_proxy:
+    environment:
+      APP_HOST: rafftyl-custom-store-rustress_web_1
+      APP_PORT: 8080
+      PROXY_AUTH_ADD: "false"
+    depends_on:
+      - web
+    restart: on-failure
