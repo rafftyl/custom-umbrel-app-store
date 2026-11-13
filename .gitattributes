@@ -1,0 +1,4 @@
+rafftyl-custom-store-bitblik-coordinator/** text eol=lf
+tests/test_bitblik_package.py text eol=lf
+tests/smoke_bitblik.py text eol=lf
+BITBLIK-REVIEW.md text eol=lf

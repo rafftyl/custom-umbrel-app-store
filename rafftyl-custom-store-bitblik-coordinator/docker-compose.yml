@@ -1,0 +1,85 @@
+services:
+  app_proxy:
+    environment:
+      APP_HOST: rafftyl-custom-store-bitblik-coordinator_dashboard_1
+      APP_PORT: 3001
+      PROXY_AUTH_ADD: "true"
+    depends_on:
+      - dashboard
+
+  postgres:
+    image: postgres:16-alpine@sha256:f377d590e5474681d4d7838635031a2b50647923b7abfa803ce9b5ff35d5c663
+    platform: linux/amd64
+    user: "1000:1000"
+    restart: on-failure
+    stop_grace_period: 1m
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: bitblik
+      POSTGRES_PASSWORD_FILE: /secrets/postgres-password
+    volumes:
+      - ${APP_DATA_DIR}/data/postgres:/var/lib/postgresql/data
+      - ${APP_DATA_DIR}/data/secrets:/secrets:ro
+      - ${APP_DATA_DIR}/hooks/init-db.sh:/docker-entrypoint-initdb.d/10-bitblik.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U postgres -d bitblik"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  coordinator:
+    image: ghcr.io/bit-blik/coordinator@sha256:50d4b501a33d2898324f9729a3b23d5a968207077acfcb3e1bdb5520ea50c7c0
+    platform: linux/amd64
+    user: "1000:1000"
+    init: true
+    restart: on-failure
+    stop_grace_period: 2m
+    working_dir: /state
+    entrypoint: ["/bin/sh", "/package/coordinator.sh"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB: bitblik
+      DB_USER: bitblik
+      LND_HOST: ${APP_LIGHTNING_NODE_IP}
+      LND_PORT: ${APP_LIGHTNING_NODE_GRPC_PORT}
+      LND_CERT_PATH: /lnd/tls.cert
+      LND_MACAROON_PATH: /state/coordinator.macaroon
+      FLOW_DIR: /app/flows
+      SIMPLEX_CHAT_EXEC: ""
+      SIGNAL_CLI_EXEC: ""
+    volumes:
+      - ${APP_DATA_DIR}/data/coordinator:/state
+      - ${APP_DATA_DIR}/data/secrets/db-password:/secrets/db-password:ro
+      - ${APP_LIGHTNING_NODE_DATA_DIR}/tls.cert:/lnd/tls.cert:ro
+      - ${APP_DATA_DIR}/hooks:/package:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+
+  dashboard:
+    image: ghcr.io/bit-blik/coordinator-dashboard@sha256:e0809c874cd9c875ed41b79d1861959b4aa9bd4546ebaf85e8e19a20f805d3d2
+    platform: linux/amd64
+    user: "1000:1000"
+    init: true
+    restart: on-failure
+    stop_grace_period: 30s
+    entrypoint: ["/bin/sh", "/package/dashboard.sh"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: bitblik
+      DB_USER: bitblik
+      COORDINATOR_ID: umbrel
+      COORDINATOR_LABEL: Umbrel BitBlik
+      PORT: "3001"
+    volumes:
+      - ${APP_DATA_DIR}/data/secrets/db-password:/secrets/db-password:ro
+      - ${APP_DATA_DIR}/hooks:/package:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]

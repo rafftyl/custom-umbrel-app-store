@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Run explicitly on the Umbrel host after install; never run by app startup.
+set -euo pipefail
+umask 077
+base="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/data/coordinator"
+network="${1:-mainnet}"
+case "$network" in mainnet|testnet|testnet4|signet|regtest) ;; *) echo 'Invalid network' >&2; exit 1;; esac
+[ -d "$base" ] || { echo 'Install/start the app first.' >&2; exit 1; }
+[ ! -e "$base/coordinator.macaroon" ] || { echo 'Macaroon already exists; refusing to replace it.' >&2; exit 1; }
+mapfile -t containers < <(docker ps -q --filter label=com.docker.compose.project=lightning --filter label=com.docker.compose.service=lnd)
+[ "${#containers[@]}" -eq 1 ] || { echo 'Expected exactly one running Umbrel lightning/lnd container.' >&2; exit 1; }
+container="${containers[0]}"
+remote="/tmp/bitblik-macaroon-$(openssl rand -hex 12)"
+local_tmp=$(mktemp "$base/.macaroon.XXXXXX")
+trap 'rm -f "$local_tmp"; docker exec "$container" rm -f "$remote" >/dev/null 2>&1 || true' EXIT
+# A distinct root key allows revocation without touching other apps.
+root_id=$((16#$(openssl rand -hex 4) + 1))
+echo 'Creating restricted credentials. These permit Lightning payments, not on-chain spending.'
+docker exec --user 1000:1000 "$container" lncli \
+  --lnddir=/data/.lnd --network="$network" bakemacaroon \
+  --root_key_id="$root_id" --save_to="$remote" \
+  uri:/lnrpc.Lightning/GetInfo \
+  uri:/lnrpc.Lightning/DecodePayReq \
+  uri:/lnrpc.Lightning/LookupInvoice \
+  uri:/invoicesrpc.Invoices/AddHoldInvoice \
+  uri:/invoicesrpc.Invoices/SubscribeSingleInvoice \
+  uri:/invoicesrpc.Invoices/SettleInvoice \
+  uri:/invoicesrpc.Invoices/CancelInvoice \
+  uri:/routerrpc.Router/SendPaymentV2 \
+  uri:/routerrpc.Router/TrackPaymentV2 >/dev/null
+# This copies ONLY the newly baked token; no admin macaroon is copied.
+docker cp "$container:$remote" "$local_tmp" >/dev/null
+test -s "$local_tmp"
+chmod 600 "$local_tmp"
+ln "$local_tmp" "$base/coordinator.macaroon"
+printf '%s\n' "$root_id" > "$base/macaroon-root-key-id"
+chmod 600 "$base/macaroon-root-key-id"
+if [ "$(id -u)" = 0 ]; then
+  chown 1000:1000 "$base/coordinator.macaroon" "$base/macaroon-root-key-id"
+fi
+echo 'Restricted macaroon saved. Trading is still disabled.'
