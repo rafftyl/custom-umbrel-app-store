@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+: "${APP_DATA_DIR:?Umbrel must supply APP_DATA_DIR}"
+base="$APP_DATA_DIR/data"
+mkdir -p "$base/coordinator" "$base/secrets" "$base/postgres"
+# Container processes deliberately run as the standard Umbrel data owner.
+for dir in "$base/coordinator" "$base/secrets" "$base/postgres"; do
+  if [ "$(stat -c %u "$dir")" != 1000 ]; then
+    if [ "$(id -u)" = 0 ]; then
+      chown 1000:1000 "$dir"
+    else
+      echo "BitBlik data must be owned by UID 1000: $dir" >&2
+      exit 1
+    fi
+  fi
+  chmod 700 "$dir"
+done
+for name in postgres-password db-password; do
+  if [ ! -e "$base/secrets/$name" ]; then
+    if [ -s "$base/postgres/PG_VERSION" ]; then
+      echo "Existing database but missing $name; restore secrets from backup." >&2
+      exit 1
+    fi
+    tmp=$(mktemp "$base/secrets/.new.XXXXXX")
+    openssl rand -hex 32 > "$tmp"
+    # Do not replace an existing credential if two preparations overlap.
+    ln "$tmp" "$base/secrets/$name" 2>/dev/null || test -s "$base/secrets/$name"
+    rm -f "$tmp"
+  fi
+  test -s "$base/secrets/$name"
+  if [ "$(id -u)" = 0 ]; then chown 1000:1000 "$base/secrets/$name"; fi
+  chmod 600 "$base/secrets/$name"
+done
+if [ ! -e "$base/coordinator/settings.env" ]; then
+  cat > "$base/coordinator/settings.env" <<'CONFIG'
+# Trusted shell configuration, read only by the coordinator process.
+NAME='My Umbrel BitBlik Coordinator'
+PAYMENT_SYSTEM=blik
+CURRENCIES=PLN
+FRONTEND_DOMAIN=bitblik.app
+NOSTR_RELAYS=wss://relay.primal.net,wss://nos.lol
+MIN_AMOUNT_SATS=1000
+MAX_AMOUNT_SATS=25000
+MAKER_FEE=0.5
+TAKER_FEE=0.5
+# Publish your terms and put their naddr here before activating.
+TERMS_OF_USAGE_NADDR=''
+CONFIG
+fi
+if [ "$(id -u)" = 0 ]; then chown 1000:1000 "$base/coordinator/settings.env"; fi
+chmod 600 "$base/coordinator/settings.env"

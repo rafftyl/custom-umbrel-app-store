@@ -1,0 +1,36 @@
+manifestVersion: 1
+id: rafftyl-custom-store-bitblik-coordinator
+category: bitcoin
+name: BitBlik Coordinator
+version: "0.13.0-umbrel.1"
+tagline: Coordinate BLIK and Lightning trades over Nostr
+description: >-
+  Run a BitBlik coordinator backed by your Umbrel Lightning Node, with a private
+  offers-monitoring dashboard. For x86-64 machines only.
+
+
+  The coordinator can spend Lightning funds and settle or cancel hold invoices.
+  Installation starts PostgreSQL and the dashboard, but trading remains disabled
+  until you provision a restricted LND macaroon and explicitly enable it using
+  the instructions in the package README. The dashboard is not a setup wizard
+  or dispute-resolution console. It may show database errors before first activation.
+
+
+  Back up the coordinator identity, settings and database together. Never run
+  duplicate workers or reset payment records to retry a pending payment.
+developer: BitBlik
+website: https://bitblik.app
+dependencies:
+  - lightning
+repo: https://github.com/bit-blik/bitblik
+support: https://github.com/rafftyl/custom-umbrel-app-store/issues
+port: 28766
+gallery: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+submitter: rafftyl
+submission: https://github.com/rafftyl/custom-umbrel-app-store
+releaseNotes: >-
+  Initial x86-64 preview: digest-pinned coordinator, PostgreSQL and monitoring
+  dashboard. Explicit activation, persistent identity and restricted LND access.
