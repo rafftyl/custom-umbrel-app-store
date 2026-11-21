@@ -28,7 +28,7 @@ services:
       retries: 12
 
   coordinator:
-    image: ghcr.io/bit-blik/coordinator@sha256:50d4b501a33d2898324f9729a3b23d5a968207077acfcb3e1bdb5520ea50c7c0
+    image: ghcr.io/rafftyl/bitblik-coordinator@sha256:23a8085b9754ebd673bf36bfe3a1b8195cae9518df79926ca54787f03a2a4fa9
     platform: linux/amd64
     user: "1000:1000"
     init: true

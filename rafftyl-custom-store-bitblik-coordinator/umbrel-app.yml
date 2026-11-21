@@ -2,7 +2,7 @@ manifestVersion: 1
 id: rafftyl-custom-store-bitblik-coordinator
 category: bitcoin
 name: BitBlik Coordinator
-version: "0.13.0-umbrel.1"
+version: "0.13.0-umbrel.2"
 tagline: Coordinate BLIK and Lightning trades over Nostr
 description: >-
   Run a BitBlik coordinator backed by your Umbrel Lightning Node, with a private
@@ -32,5 +32,5 @@ defaultPassword: ""
 submitter: rafftyl
 submission: https://github.com/rafftyl/custom-umbrel-app-store
 releaseNotes: >-
-  Initial x86-64 preview: digest-pinned coordinator, PostgreSQL and monitoring
-  dashboard. Explicit activation, persistent identity and restricted LND access.
+  Adds an optional routing fee ceiling for new taker payouts. Existing payment
+  attempts retain their saved fee limits; see the package README.
