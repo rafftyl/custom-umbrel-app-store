@@ -11,18 +11,9 @@ This is a local preview, not a published/approved release. Tested in disposable
 Docker on x86-64; actual Umbrel UI, LND TLS/macaroon and payment acceptance remain
 outstanding. Do not send production funds based solely on the smoke test.
 
-Pinned registry images verified on 2026-11-13:
-- coordinator 0.13.0: OCI source revision
-  `3311c2b1c1f55ad0a8ed31e0c02506f2516153dd`.
-  Digest `50d4b501a33d2898324f9729a3b23d5a968207077acfcb3e1bdb5520ea50c7c0`.
-- dashboard: tag `sha-e6a379f`,
-  digest `e0809c874cd9c875ed41b79d1861959b4aa9bd4546ebaf85e8e19a20f805d3d2`.
-- PostgreSQL: 16-alpine,
-  digest `f377d590e5474681d4d7838635031a2b50647923b7abfa803ce9b5ff35d5c663`.
-
-The coordinator pin is the available published image, NOT the newer local
-BitBlik checkout. In particular, local revision 7bb0061's coordinator-info fix
-is not represented by this image. Updating the pin requires repeating tests.
+Pinned registry images:
+- Coordinator: `ghcr.io/rafftyl/bitblik-coordinator@sha256:23a8085b9754ebd673bf36bfe3a1b8195cae9518df79926ca54787f03a2a4fa9`, custom x64 build at source revision `0ae85a4537bac75b7ff1ab01dfe74b1795160e79` (base `3311c2b`).
+- Dashboard and PostgreSQL: unchanged from the initial package; see `docker-compose.yml`.
 
 ## 1. Install through your community store
 
@@ -76,6 +67,27 @@ LND or Bitcoin. Open the dashboard and verify coordinator startup, database and
 relay connectivity. Inspect app logs locally if needed; never publish key files.
 Use the coordinator's public key in BitBlik to identify your coordinator.
 Do not send a test payment until you separately decide to authorize it.
+
+## Routing fee ceiling (0.13.0-umbrel.2 and later)
+
+The coordinator routing budget is separate from `TAKER_FEE`. To override the
+budget, edit the existing `data/coordinator/settings.env` on Umbrel and add:
+
+```sh
+TAKER_ROUTING_FEE_LIMIT_PERCENT=0.30
+```
+
+Check the shell syntax with `sh -n settings.env` from that directory and
+restart **BitBlik Coordinator only** from Umbrel. `0.30` means 0.30% of the
+net taker payout, rounded up to whole sats, with a 10-sat floor. Accepted
+values are 0.01 through 100 with at most two decimal places. An unset or blank
+setting keeps the old ceiling: 20% of the taker fee, rounded up, minimum 10
+sats. This budget does not change the taker's fee or net payout.
+
+Previously saved attempts keep their original routing budget. Never retry a
+pending, unknown, or already paid attempt. A definitively failed and unpaid
+BOLT11 payout can use the new limit when the taker submits a fresh invoice for
+the exact net payout on the existing offer. Do not delete or edit payment rows.
 
 ## 5. Disable and recovery
 
