@@ -77,6 +77,27 @@ relay connectivity. Inspect app logs locally if needed; never publish key files.
 Use the coordinator's public key in BitBlik to identify your coordinator.
 Do not send a test payment until you separately decide to authorize it.
 
+## Routing fee ceiling (0.13.0-umbrel.2 and later)
+
+The coordinator routing budget is separate from `TAKER_FEE`. To override the
+budget, edit the existing `data/coordinator/settings.env` on Umbrel and add:
+
+```sh
+TAKER_ROUTING_FEE_LIMIT_PERCENT=0.30
+```
+
+Check the shell syntax with `sh -n settings.env` from that directory and
+restart **BitBlik Coordinator only** from Umbrel. `0.30` means 0.30% of the
+net taker payout, rounded up to whole sats, with a 10-sat floor. Accepted
+values are 0.01 through 100 with at most two decimal places. An unset or blank
+setting keeps the old ceiling: 20% of the taker fee, rounded up, minimum 10
+sats. This budget does not change the taker's fee or net payout.
+
+Previously saved attempts keep their original routing budget. Never retry a
+pending, unknown, or already paid attempt. A definitively failed and unpaid
+BOLT11 payout can use the new limit when the taker submits a fresh invoice for
+the exact net payout on the existing offer. Do not delete or edit payment rows.
+
 ## 5. Disable and recovery
 
 Removing ENABLED only takes effect on the next coordinator restart; it does not

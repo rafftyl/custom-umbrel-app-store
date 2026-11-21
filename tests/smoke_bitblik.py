@@ -6,11 +6,14 @@ import subprocess
 import tempfile
 import time
 import uuid
+import yaml
 
 APP = Path(__file__).resolve().parents[1] / 'rafftyl-custom-store-bitblik-coordinator'
-COORD = 'ghcr.io/bit-blik/coordinator@sha256:50d4b501a33d2898324f9729a3b23d5a968207077acfcb3e1bdb5520ea50c7c0'
-DASH = 'ghcr.io/bit-blik/coordinator-dashboard@sha256:e0809c874cd9c875ed41b79d1861959b4aa9bd4546ebaf85e8e19a20f805d3d2'
-PG = 'postgres:16-alpine@sha256:f377d590e5474681d4d7838635031a2b50647923b7abfa803ce9b5ff35d5c663'
+IMAGES = yaml.safe_load((APP / 'docker-compose.yml').read_text())['services']
+# Opt-in override for a locally built, not-yet-published coordinator image.
+COORD = os.environ.get('BITBLIK_SMOKE_COORDINATOR_IMAGE', IMAGES['coordinator']['image'])
+DASH = IMAGES['dashboard']['image']
+PG = IMAGES['postgres']['image']
 name = 'bitblik-test-' + uuid.uuid4().hex[:10]
 containers = []
 def docker(*args, check=True):
